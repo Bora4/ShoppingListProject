@@ -1,0 +1,71 @@
+﻿@using ShoppingListAPI.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model User
+
+@{
+    Layout = "_LayoutNoHeader";
+}
+
+<html>
+    <head></head>
+    <body>
+    @using (Html.BeginForm())
+    {
+        <div class="mydiv">
+            <h1 style="margin-bottom: 80px">Create an Account</h1>
+            <div class="textboxdiv">
+                @Html.TextBox("FirstName", value:"", htmlAttributes: new { placeholder = "First Name" })
+            </div>
+            <div class="textboxdiv">
+                @Html.TextBox("LastName", value:"", htmlAttributes: new { placeholder = "Last Name" })
+            </div>
+            <div class="textboxdiv">
+                @Html.TextBox("Email", value:"", htmlAttributes: new { type = "mail", placeholder = "Email" })
+            </div>
+            <div class="textboxdiv">
+                @Html.TextBox("Password", value:"", htmlAttributes: new { type = "password", placeholder = "Password"})
+            </div >
+            <div class="textboxdiv">
+                @Html.TextBox("Password2", value:"", htmlAttributes: new { type = "password", placeholder = "Enter your password again"})
+            </div >
+            <div class="textboxdiv">
+                @ViewBag.Data
+            </div>
+            <div class="textboxdiv">
+                <button>Create Account</button>
+            </div>
+            <div class="textboxdiv">
+                @Html.ActionLink(controllerName:"Login",linkText:"Already have an account? Sign in!",actionName:"Login")
+            </div>
+
+        </div>
+    }
+</body>
+</html>
+
+<style>
+
+    input[type=text]{
+        width: 50%;
+    }
+
+    input[type=mail]{
+        width: 50%;
+    }
+
+    input[type=password]{
+        width: 50%;
+    }
+
+
+    .mydiv{
+        margin-top: 100px;
+        text-align: center;
+    }
+
+    .textboxdiv{
+        margin-top: 20px;
+    }
+
+    
+</style>

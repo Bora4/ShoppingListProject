@@ -1,0 +1,83 @@
+﻿    <html>
+        <head></head>
+        <body>
+            @{
+                ViewData["Title"] = "Home";
+            }
+
+            <div class="mydiv">
+            <div class="leftpanel">
+            <h4>Add Item</h4>
+            </div>
+
+            <div class="middlepanel">
+
+            @using (Html.BeginForm())
+            {
+
+                @Html.TextBox("ItemName", value:"", htmlAttributes: new{ placeholder = "Name" })
+                <br />
+                <select name="CategoryId" id="cars">
+                    <option value="1">Dairy</option>
+                    <option value="2">Beverages</option>
+                    <option value="3">Bread/Bakery</option>
+                    <option value="4">Canned/Jarred Goods</option>
+                    <option value="5">Dry/Baking Goods</option>
+                    <option value="6">Frozen Goods</option>
+                    <option value="7">Meat</option>
+                    <option value="8">Produce</option>
+                    <option value="9">Cleaners</option>
+                    <option value="10">Paper Goods</option>
+                    <option value="11">Personal Care</option>
+                    <option value="12">Other</option>
+                </select>
+                <br />
+                <input type="submit" value = "Add" formaction = "AddItemMenu" />
+            }
+
+
+            </div>
+
+            <div class="rightpanel">
+                <h2>@CurrentUser.FirstName</h2>
+                <h3>@CurrentUser.LastName</h3>
+                <h4>@CurrentUser.Email</h4>
+                @Html.ActionLink("My Shopping Lists", "MyShoppingLists")
+            </div>      
+            </div>
+
+            
+
+        </body>
+    </html>
+
+    <style>
+
+        ul{
+            list-style: none;
+        }
+
+        .mydiv {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        .leftpanel{
+            float: left;
+            width: 15%;
+        }
+
+        .middlepanel{
+            float:left;
+            width: 70%;
+        }
+
+        .rightpanel{
+            float: right;
+            width: 15%;
+            text-align: center;
+        }
+
+
+    </style>
+

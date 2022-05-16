@@ -1,0 +1,235 @@
+﻿@using ShoppingListAPI.Models
+@model ShoppingList
+
+    <html>
+        <head>
+            
+            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+            
+        </head>
+        
+        <body>
+            <div class="mydiv">
+            <div class="leftpanel">
+            
+                <h4 style = "text-align: center">@Model.Name</h4>
+                <ul id = "final-list"></ul>
+                @Html.ActionLink("Done", "Index")
+
+            </div>
+
+            <div class="middlepanel">
+                <h4 style="text-align: center">You are now at the supermarket</h4>
+            </div>
+
+            <div class="rightpanel">
+                <h2>@CurrentUser.FirstName</h2>
+                <h3>@CurrentUser.LastName</h3>
+                <h4>@CurrentUser.Email</h4>
+                @Html.ActionLink("My Shopping Lists", "MyShoppingLists")
+            </div>      
+            </div>
+        </body>
+    </html>
+
+    <style>
+
+        body {
+            margin:0;
+            height: 100%;
+        }
+
+        ul{
+            list-style: none;
+            padding-left: 0;
+        }
+
+        #searchbar{
+            display: none;
+        }
+
+        input[type=submit] {
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: #007bff;
+        }
+
+        .removeButton{
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: red;
+        }
+
+        .searchButton{
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: #05e31e;
+            display: none;
+        }
+
+        .addButton {
+            margin-top: 5px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: #16a3f5;
+        }        
+
+        input[type=text]{
+            border: none;
+            border-bottom: 1px solid black;
+        }
+
+        input[type=text]:focus{
+            outline:none;
+            border-bottom: 1px solid black
+        }
+
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            margin: 0; 
+        }
+
+        .mydiv {
+
+            position: absolute;
+            top: 56px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 100%;
+            
+        }
+
+        .leftpanel{
+            border-right: 1px solid black;
+            float: left;
+            width: 20%;
+            height: 100%;
+            box-shadow: 1px 10px 15px black;
+            text-align: center;
+        }
+
+        #cartname {
+            display: block;
+            margin: 0 auto;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .leftpanel input[type=submit]{
+            display: block;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+
+        .middlepanel{
+            
+            float:left;
+            width: 60%;
+            height: 100%;
+            padding: 25px;
+        }
+
+
+        .categoryname{
+            color: #dbbd6b;
+            font-size: 30px;
+            font-weight: bold;
+            background: none;
+            background-color: #ffffeb;
+            border: none;
+            padding: 0;
+        }
+
+        .itemname{
+            background: none;
+            border: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .itemnamexr{
+            background: none;
+            border: none;
+            padding: 0;
+            margin-top: 10px;
+            text-decoration: line-through;
+        }
+
+        .quantity{
+            -moz-appearance: textfield;
+            display: inline;
+            width: 20px;
+            margin-right: 5px;
+            margin-left: 5px;
+            outline:none;
+            border: none;
+        }
+
+        .quantity:focus{
+            border: none;
+        }
+
+        
+
+        .rightpanel{
+            border-left: 1px solid black;
+            float: right;
+            width: 20%;
+            text-align: center;
+            height: 100%;
+            box-shadow: 1px 10px 15px black;
+        }
+
+
+    </style>
+
+
+
+            @{
+            var id = @Model.Id;
+            }
+    <script>
+
+        $(document).ready(function getList()
+                {
+                    $.ajax
+                    (
+                        {
+                            url: "http://localhost:5997/api/ShoppingListDetails/" +@id,
+                            type: "GET",
+                            success: function(data)
+                            {
+                                var str = JSON.stringify(data)
+                                console.log("data: " + str);
+                                var html = ""
+                                $.each(data, function(key, value)
+                                {
+                                    html += "<li ><p id='cartitem"+ value.itemId +"' class = 'itemname'>"+ value.item.name +" x "+ value.quantity + "<input type = 'checkbox' style= 'margin-left: 5px;' id='checkbox" + value.itemId +"' onclick = 'crossName("+ value.itemId +")'/></p></li>"
+                                })
+                                $("#final-list").html(html);
+                        
+                            }
+                        }
+                    )
+                })
+        
+        function crossName(id){
+            var cbox = document.getElementById("checkbox" + id)
+            var item = document.getElementById("cartitem" + id)
+            if (cbox.checked == false){
+                item.className = "itemname"
+            } else {
+                item.className = "itemnamexr"
+            }
+
+        }
+                
+    </script>

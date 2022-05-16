@@ -1,0 +1,291 @@
+﻿@using ShoppingListAPI.Models
+@model List<ShoppingList>
+
+<html>
+    <head></head>
+    <body>
+
+        <div class="mydiv">
+            <div class="leftpanel">
+                <h2 style="text-align: center" id = "cart-title">Shopping List</h2>
+                <ul id = "shopping-cart"></ul>
+                @Html.ActionLink("To the market", "Market")
+            </div>
+
+            <div id = "middlepanel" class="middlepanel">
+                 <h1 style="text-align: center">@CurrentUser.FirstName's Lists</h1>
+                @foreach (ShoppingList item in Model)
+                {
+                    string idstring = "category" + @item.Id;
+                    <div id = @idstring style="float: left; padding: 30px"> 
+                    @using (Html.BeginForm())
+                    {
+                        <input class = "categoryname" id = @item.Id type = "button" value= "@item.Name" onclick = "viewList(@item.Id)" />
+                        <input class = "removeButton" type = "button" value="Delete" onclick = "deleteList(@item.Id)" />
+                    }
+                    </div>
+                }
+                    <!-- Modal -->
+            <div id="myModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style = "text-align:center"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <ul id = "itemList"></ul> 
+                    </div>  
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="removeButton" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+            </div>
+        </div>
+            </div>
+
+            <div class="rightpanel">
+                <h2>@CurrentUser.FirstName</h2>
+                <h3>@CurrentUser.LastName</h3>
+                <h4>@CurrentUser.Email</h4>
+            </div>      
+            </div>
+
+
+
+
+        
+        
+    </body>
+</html>
+
+ <style>
+
+        body {
+            margin:0;
+            height: 100%;
+        }
+        .mydiv {
+
+            position: absolute;
+            top: 56px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 100%;
+            
+        }
+
+        ul{
+            list-style: none;
+            padding-left: 0;
+        }
+
+        input[type=submit] {
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: #007bff;
+        }
+
+        .removeButton{
+            margin-left: 5px; 
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: red;
+        }
+
+        .searchButton{
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: #05e31e;
+        }
+
+        .addButton {
+            margin-top: 5px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: #16a3f5;
+        }        
+
+        input[type=text]{
+            border: none;
+            border-bottom: 1px solid black;
+        }
+
+        input[type=text]:focus{
+            outline:none;
+            border-bottom: 1px solid black
+        }
+
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            margin: 0; 
+        }
+
+        
+
+        .leftpanel{
+            border-right: 1px solid black;
+            float: left;
+            width: 20%;
+            height: 100%;
+            box-shadow: 1px 10px 15px black;
+            text-align: center;
+        }
+
+        #cartname {
+            display: block;
+            margin: 0 auto;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .leftpanel input[type=submit]{
+            display: block;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+
+        .middlepanel{
+            
+            float:left;
+            width: 60%;
+            height: 100%;
+            padding: 25px;
+        }
+
+        .categoryname{
+            color: #dbbd6b;
+            font-size: 24px;
+            font-weight: bold;
+            background: none;
+            background-color: #ffffeb;
+            border: none;
+            padding: 0;
+        }
+
+        .itemname{
+            background: none;
+            border: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .quantity{
+            -moz-appearance: textfield;
+            display: inline;
+            width: 20px;
+            margin-right: 5px;
+            margin-left: 5px;
+            outline:none;
+            border: none;
+        }
+
+        .quantity:focus{
+            border: none;
+        }
+
+        .rightpanel{
+            border-left: 1px solid black;
+            float: right;
+            width: 20%;
+            text-align: center;
+            height: 100%;
+            box-shadow: 1px 10px 15px black;
+        }
+
+
+    </style>
+
+
+
+    <script>
+
+        function viewList(id)
+        {
+            var cartname = document.getElementById(id).value;
+
+            $.ajax(
+                {
+                    url: "http://localhost:5997/api/ShoppingListDetails/"+ id,
+                    type: "GET",
+                    success: function(data)
+                    {
+                        var html = ""
+                        $.each(data, function(key, value)
+                        {
+                            html+= "<li id='cartitem"+ value.itemId +"'><p class = 'itemname'>"+ value.item.name +" x "+ value.quantity +"<input type = 'button' class = 'removeButton' value = 'Remove' onClick = 'removeFromCart("+ value.shoppingListId + "," + value.itemId + ")' /></p></li>"
+                        }
+                        )
+                        $("#shopping-cart").html(html);
+                        $("#cart-title").html(cartname);
+                    }
+                });
+        finalTitle(id)
+        }
+
+        function finalTitle(id){
+            console.log("id: " +id)
+        $.ajax(
+           {
+           url: "http://localhost:5997/Home/FinalTitle?id=" + id, 
+           type: "POST"
+       })
+    }
+
+
+        function deleteList(id){
+            var middlepanel = document.getElementById("middlepanel");
+            var list = document.getElementById("category"+id);
+            middlepanel.removeChild(list);
+            $.ajax({
+                url: "http://localhost:5997/api/ShoppingLists/" +id,
+                type: "DELETE"
+            })
+        }
+
+        function removeFromCart(listid, itemid){
+        var shoppingCart = document.getElementById("shopping-cart");
+        let cartitem = document.getElementById("cartitem" + itemid);
+        shoppingCart.removeChild(cartitem)
+        $.ajax(
+            {
+                url: "http://localhost:5997/api/ShoppingListDetails/"+ listid + "/" + itemid,
+                type: "DELETE"
+            }
+        )
+
+    }
+
+
+
+
+    function search(){
+        var name = document.getElementById("searchbar").value;
+        $.ajax(
+            {
+                url: "http://localhost:5997/api/ShoppingLists/Names/" +name,
+                type: "GET",
+                success: function(data){
+                    var html = "<li><p class='itemname'>" + data.name + " x <input class= 'quantity' type='number' name=item" + data.id + " id=item" + data.id + " value= 1 /><input class='addButton' type = 'button' value = 'View' onClick = 'viewList(" + data.id + ")' data-dismiss='modal' /></p></li>"
+                    $("#itemList").html(html);
+                    $(".modal-title").html(data.name);
+                }
+            }
+        )
+    }
+
+    </script>

@@ -1,0 +1,395 @@
+﻿@using ShoppingList.Models.ViewModels
+@using ShoppingListAPI.Models
+@model IndexViewModel
+
+    <html>
+        <head>
+
+        </head>
+        <body>
+
+            <div class="mydiv">
+            <div class="leftpanel">
+            @using (Html.BeginForm())
+            {
+                @Html.TextBox("ShoppingListName", Model.Cart.Title, htmlAttributes: new {placeholder= "List name....", id = "cartname"})
+
+            @if (Model.Cart.Items.Any() == true)
+            {
+               @foreach (ViewItem shoppinglistitem in Model.Cart.Items)
+                {   
+                    string idstring = "category" + @shoppinglistitem.Id;
+                    string quantityidstring = "cartitemquantity" + @shoppinglistitem.Id; 
+                    <ul id = "shopping-cart">
+                        <li class= "cartitem" id= @idstring><p class= "itemname"> @shoppinglistitem.Name </p> x <p class = "itemname" id = @quantityidstring> @shoppinglistitem.Quantity </p><input type = "button" class = "removeButton" value = "Remove" onclick = "removeFromCart(@shoppinglistitem.Id)" /></li>
+                    </ul>
+
+                
+                }
+            } else
+            {
+                    <ul id = "shopping-cart"></ul>
+            }
+
+                
+            
+            <input type = "submit" value = "Save" formaction = "SaveList" onclick= "setTitle()" />
+            <input type = "submit" value = "To the market" formaction = "Market" />
+            }
+            
+            </div>
+
+            <div class="middlepanel">        
+                <h4 style="text-align: center; margin-bottom: 25px">Categories</h4>
+            @foreach (Category category in Model.Categories)
+           {
+                <div style="float: left; padding-right: 20px; padding-bottom: 10px"> 
+                    <input type="button" class="categoryname" id= "categorybutton" value="@category.Name" onclick= "getCategory(@category.Id)" data-toggle="modal" data-target="#myModal" /> 
+                     
+                </div>
+                
+           }
+
+            <!-- Modal -->
+            <div id="myModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style = "text-align:center"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <ul id = "itemList"></ul> 
+                    </div>  
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="removeButton" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+            </div>
+        </div>
+
+    </div>
+            @{
+            string display = "none";
+
+            if (CurrentUser.Id == 1)
+            {
+                display = "block";
+            } 
+
+            }
+
+            <div class="rightpanel">
+                <h2>@CurrentUser.FirstName</h2>
+                <h3>@CurrentUser.LastName</h3>
+                <h4>@CurrentUser.Email</h4>
+                @Html.ActionLink("My Shopping Lists", "MyShoppingLists")
+                <br />
+                <div style = " display: @display " > @Html.ActionLink("Add Item", "AddItemMenu") </div>
+                <br />
+                @Html.ActionLink("Logout", "Logout")
+                
+            </div>      
+            </div>
+
+            
+
+        </body>
+    </html>
+
+    <style>
+
+        body {
+            margin:0;
+            height: 100%;
+        }
+
+        ul{
+            list-style: none;
+            padding-left: 0;
+        }
+
+        input[type=submit] {
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: #007bff;
+        }
+
+        .removeButton{
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: red;
+            margin-left: 5px
+        }
+
+        .searchButton{
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: #05e31e;
+        }
+
+        .addButton {
+            margin-top: 5px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: #16a3f5;
+        }        
+
+        input[type=text]{
+            border: none;
+            border-bottom: 1px solid black;
+        }
+
+        input[type=text]:focus{
+            outline:none;
+            border-bottom: 1px solid black
+        }
+
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            margin: 0; 
+        }
+
+        .mydiv {
+
+            position: absolute;
+            top: 56px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 100%;
+            
+        }
+
+        .leftpanel{
+            border-right: 1px solid black;
+            float: left;
+            width: 20%;
+            height: 100%;
+            box-shadow: 1px 10px 15px black;
+            text-align: center;
+        }
+
+        #cartname {
+            display: block;
+            margin: 0 auto;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .cartitem {
+            margin-top: 5px;
+        }
+
+        .leftpanel input[type=submit]{
+            display: block;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+
+        .middlepanel{
+            
+            float:left;
+            width: 60%;
+            height: 100%;
+            padding: 25px;
+        }
+
+
+        .categoryname{
+            color: #dbbd6b;
+            font-size: 30px;
+            font-weight: bold;
+            background: none;
+            background-color: #ffffeb;
+            border: none;
+            padding: 0;
+        }
+
+        .itemname{
+            background: none;
+            border: none;
+            padding: 0;
+            margin-top: 10px;
+            display: inline
+        }
+
+        .quantity{
+            -moz-appearance: textfield;
+            display: inline;
+            width: 20px;
+            margin-right: 5px;
+            margin-left: 5px;
+            outline:none;
+            border: none;
+        }
+
+        .quantity:focus{
+            border: none;
+        }
+
+        
+
+        .rightpanel{
+            border-left: 1px solid black;
+            float: right;
+            width: 20%;
+            text-align: center;
+            height: 100%;
+            box-shadow: 1px 10px 15px black;
+        }
+
+
+    </style>
+
+    <script>
+
+    function setCart(id, quantity){
+        var cartname = document.getElementById("cartname").value;
+       $.ajax(
+           {
+           url: "http://localhost:5997/Home/SetCart?id=" + id + "&quantity=" + quantity + "&cartname=" + cartname, 
+           type: "POST"
+       }
+       )
+
+    }
+    
+    function setTitle(){
+        var cartname = document.getElementById("cartname").value;
+        $.ajax(
+           {
+           url: "http://localhost:5997/Home/SetTitle?cartname=" + cartname, 
+           type: "POST"
+       })
+    }
+
+    function getCategory(id)
+    {
+            $.ajax(
+            {
+            url:"http://localhost:5997/api/Categories/" + id,
+            type: "GET",
+            success: function(data)
+            {
+                    var html = "";
+                    $.each(data.items, function(key,value)
+                    {
+                        html += "<li class= 'cartitem'><p class='itemname'>" + value.name + " x <input class= 'quantity' type='number' name=item" + value.id + " id=item" + value.id + " value= 1 /><input class = 'addButton' type = 'button' value = 'Add' onClick = 'addToCart(" + value.id + ")' /></p></li>";
+                    });
+                    $("#itemList").html(html);
+                    $(".modal-title").html(data.name)
+            }
+            }
+            );
+        
+     }
+
+
+    function addToCart(id)
+    {
+        var shoppingCart = document.getElementById("shopping-cart");
+        if(shoppingCart == null)
+        {
+            var shoppinginnerHTML = "";
+        } else 
+        {
+            var shoppinginnerHTML = shoppingCart.innerHTML;
+            var quantity = document.getElementById("item"+id);
+            var cartitem = document.getElementById("cartitem"+ id)
+            if(cartitem != null)
+            {
+                $.ajax(
+                {
+                    url:"http://localhost:5997/api/Items/" +id,
+                    type: "GET",
+                    success: function(data)
+                    {
+                        var oldquantity = document.getElementById("cartitemquantity" + id)
+
+                        var oldint = parseInt(oldquantity.innerHTML)
+
+                        var quantityint = parseInt(quantity.value)
+
+                        var myint = quantityint + oldint
+
+                        var html ="<p class='itemname'>" + data.name + "</p> x <p class = 'itemname' id = 'cartitemquantity" + id +"'>" + myint + "</p><input type = 'button' class = 'removeButton' value = 'Remove' onclick = 'removeFromCart("+ id + ")' />"
+                        cartitem.innerHTML = html
+                        setCart(id, myint)
+                
+                    }
+                });
+                
+            }
+            else 
+            {
+                
+                $.ajax(
+                {
+                    url:"http://localhost:5997/api/Items/" +id,
+                    type: "GET",
+                    success: function(data)
+                    {
+                        shoppinginnerHTML +="<li class= 'cartitem' id='cartitem"+ id +"'><p class='itemname'>" + data.name + "</p> x <p class = 'itemname' id = 'cartitemquantity" + id +"'>" + quantity.value + "</p><input type = 'button' class = 'removeButton' value = 'Remove' onclick = 'removeFromCart("+ id + ")' /></li>"
+                        $("#shopping-cart").html(shoppinginnerHTML);
+                        setCart(id, quantity.value)
+                    }
+                });
+                
+            }
+            
+        }
+        
+        
+    }
+
+    function removeFromCart(id){
+        var shoppingCart = document.getElementById("shopping-cart");
+        let cartitem = document.getElementById("cartitem" + id);
+        shoppingCart.removeChild(cartitem)
+        dontSetCart(id)
+
+    }
+
+    function dontSetCart(id){
+        var cartname = document.getElementById("cartname").value;
+
+        $.ajax(
+           {
+           url: "http://localhost:5997/Home/DontSetCart?id=" + id + "&cartname=" + cartname, 
+           type: "DELETE"
+       }
+       )
+
+    }
+
+    function search(){
+        var name = document.getElementById("searchbar").value;
+        $.ajax(
+            {
+                url: "http://localhost:5997/api/Items/Names/" +name,
+                type: "GET",
+                success: function(data){
+                    var html = "<li><p class='itemname'>" + data.name + " x <input class= 'quantity' type='number' name=item" + data.id + " id=item" + data.id + " value= 1 /><input class='addButton' type = 'button' value = 'Add' onClick = 'addToCart(" + data.id + ")' /></p></li>"
+                    $("#itemList").html(html);
+                    $(".modal-title").html(data.name);
+                }
+            }
+        )
+    }
+
+
+    </script>

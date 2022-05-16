@@ -1,0 +1,61 @@
+﻿@using ShoppingListAPI.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model User
+@{
+    Layout = "_LayoutNoHeader";
+}
+<html>
+    <head></head>
+    <body>
+    @using (Html.BeginForm())
+    {
+        <div class="mydiv">
+            <h1 style="margin-bottom: 80px">Login</h1>
+            <div class="textboxdiv">
+                @Html.TextBoxFor(u => u.Email, htmlAttributes: new {type = "mail", placeholder = "someone@example.com"})
+            </div>
+            <div class="textboxdiv">
+                @Html.TextBoxFor(u => u.Password, "password", htmlAttributes: new {type = "password", placeholder = "Password"})
+            </div >
+            <div class="textboxdiv">
+                @ViewBag.Message
+            </div>
+            <div class="textboxdiv">
+                <input type = "checkbox" name = "RememberMe"/> Remember Me
+            </div>
+            <div class="textboxdiv">
+                <button>Login</button>
+            </div>
+            <div class="textboxdiv">
+                @Html.ActionLink(controllerName:"Login",linkText:"Don't have an account? Sign up!",actionName:"CreateAccount")
+            </div>
+
+        </div>
+        
+    }
+    
+</body>
+</html>
+
+<style>
+
+    input[type=mail]{
+        width: 50%;
+    }
+
+    input[type=password]{
+        width: 50%;
+    }
+
+
+    .mydiv{
+        margin-top: 100px;
+        text-align: center;
+    }
+
+    .textboxdiv{
+        margin-top: 20px;
+    }
+
+    
+</style>
